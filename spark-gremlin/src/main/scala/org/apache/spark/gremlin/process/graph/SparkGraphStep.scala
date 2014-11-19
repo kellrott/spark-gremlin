@@ -32,4 +32,6 @@ class SparkGraphStep[E <: Element](traversal: Traversal[_, _], returnClass: Clas
       //if (PROFILING_ENABLED) TraversalMetrics.stop(this)
     }
   }
+
+  override def remove() = {}
 }

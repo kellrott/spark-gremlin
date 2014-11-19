@@ -41,4 +41,6 @@ abstract class RDDIterator[I, O] extends java.util.Iterator[O] with java.lang.It
     rddCollect = null
     this
   }
+
+  override def remove() = {}
 }

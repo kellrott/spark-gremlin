@@ -15,6 +15,8 @@ import org.apache.spark.{graphx}
 
 import com.tinkerpop.gremlin.structure.Graph.Exceptions
 import com.tinkerpop.gremlin.structure.{Graph, Vertex, Transaction, Edge}
+import com.tinkerpop.gremlin.process.computer.util.GraphComputerHelper
+import org.apache.spark.gremlin.process.computer.SparkGraphComputer
 
 object SparkGraph {
   def open: SparkGraph = {
@@ -32,8 +34,8 @@ object SparkGraph {
   }
 }
 
-@Graph.OptIn(Graph.OptIn.SUITE_PROCESS_STANDARD)
-//@Graph.OptIn(Graph.OptIn.SUITE_PROCESS_COMPUTER)
+//@Graph.OptIn(Graph.OptIn.SUITE_PROCESS_STANDARD)
+@Graph.OptIn(Graph.OptIn.SUITE_PROCESS_COMPUTER)
 class SparkGraph(var graph : graphx.Graph[SparkGraphVertex,SparkGraphEdge]) extends Graph {
 
   var graphVariables : SparkGraphGraphVariables = null
@@ -70,7 +72,14 @@ class SparkGraph(var graph : graphx.Graph[SparkGraphVertex,SparkGraphEdge]) exte
 
   override def E(): GraphTraversal[Edge, Edge] = ???
 
-  override def compute(graphComputerClass: Class[_]*): GraphComputer = ???
+  override def compute(graphComputerClass: Class[_]*): GraphComputer = {
+    //GraphComputerHelper.validateComputeArguments(graphComputerClass)
+    if (graphComputerClass.length == 0 || graphComputerClass(0).equals(classOf[SparkGraphComputer])) {
+      return new SparkGraphComputer(this)
+    } else {
+      throw new RuntimeException("Graph Computer not supported") //Graph.Exceptions.graphDoesNotSupportProvidedGraphComputer(graphComputerClass(0))
+    }
+  }
 
   override def close(): Unit = {
     if (graph != null)
