@@ -11,7 +11,7 @@ import org.apache.spark.gremlin.process.graph.SparkGraphStep
 
 import collection.JavaConverters._
 
-import org.apache.spark.{graphx}
+import org.apache.spark.{SparkContext, graphx}
 
 import com.tinkerpop.gremlin.structure.Graph.Exceptions
 import com.tinkerpop.gremlin.structure.{Graph, Vertex, Transaction, Edge}
@@ -36,13 +36,14 @@ object SparkGraph {
 
 //@Graph.OptIn(Graph.OptIn.SUITE_PROCESS_STANDARD)
 @Graph.OptIn(Graph.OptIn.SUITE_PROCESS_COMPUTER)
-class SparkGraph(var graph : graphx.Graph[SparkGraphVertex,SparkGraphEdge]) extends Graph {
+class SparkGraph(val sc : SparkContext) extends Graph {
 
+  var graph : graphx.Graph[SparkGraphVertex,SparkGraphEdge] = null
   var graphVariables : SparkGraphGraphVariables = null
-  var config : SparkGraphConfiguration = null
+  var config : SparkGraphConfiguration = new SparkGraphConfiguration()
 
   private def this(configuration: Configuration) {
-    this(null.asInstanceOf[graphx.Graph[SparkGraphVertex,SparkGraphEdge]])
+    this(new SparkContext("local", "SparkGraph"))
     this.config = new SparkGraphConfiguration(configuration)
     //this.configuration = new SparkConfiguration(configuration)
     //this.variables = new GiraphGraphVariables

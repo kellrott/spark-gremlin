@@ -1,0 +1,52 @@
+{
+  "protocol" : "Blueprints",
+  "namespace" : "sparkgraph.blueprints.avro",
+  "types" : [ {
+    "type" : "enum",
+    "name" : "ElementType",
+    "symbols" : [ "VERTEX", "EDGE" ]
+  }, {
+    "type" : "record",
+    "name" : "AvroProperty",
+    "fields" : [ {
+      "name" : "key",
+      "type" : "string"
+    }, {
+      "name" : "value",
+      "type" : [ "int", "boolean", "long", "string", "float", "double" ]
+    } ]
+  }, {
+    "type" : "record",
+    "name" : "AvroEdge",
+    "fields" : [ {
+      "name" : "src",
+      "type" : "long"
+    }, {
+      "name" : "dest",
+      "type" : "long"
+    }, {
+      "name" : "label",
+      "type" : "string"
+    } ]
+  }, {
+    "type" : "record",
+    "name" : "AvroElement",
+    "fields" : [ {
+      "name" : "type",
+      "type" : "ElementType"
+    }, {
+      "name" : "id",
+      "type" : "long"
+    }, {
+      "name" : "props",
+      "type" : {
+        "type" : "array",
+        "items" : "AvroProperty"
+      }
+    }, {
+      "name" : "edge",
+      "type" : [ "null", "AvroEdge" ]
+    } ]
+  } ],
+  "messages" : { }
+}

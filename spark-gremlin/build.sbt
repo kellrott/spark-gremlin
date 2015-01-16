@@ -14,7 +14,7 @@ libraryDependencies ++= Seq(
 	"org.apache.spark" %% "spark-core" % "1.1.0",
 	"org.apache.spark" %% "spark-graphx" % "1.1.0",
 	"com.tinkerpop" % "gremlin-core" % "3.0.0.M5",
-	"com.tinkerpop" % "tinkergraph-gremlin" % "3.0.0.M5",	
+	"com.tinkerpop" % "tinkergraph-gremlin" % "3.0.0.M5",
 	"com.tinkerpop" % "gremlin-test" % "3.0.0.M5" % "test",
 	"com.twitter" % "parquet-avro" % "1.5.0",
 	"org.apache.avro" % "avro" % "1.7.7",

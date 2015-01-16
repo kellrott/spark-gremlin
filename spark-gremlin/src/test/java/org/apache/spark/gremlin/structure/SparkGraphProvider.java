@@ -18,24 +18,14 @@ import java.util.List;
 import java.util.Map;
 
 
-
-
 public class SparkGraphProvider extends AbstractGraphProvider {
 
     public static Map<String, String> PATHS = new HashMap<>();
 
     static {
         try {
-            final List<String> kryoResources = Arrays.asList(
-                    "tinkerpop-modern-vertices.gio",
-                    "grateful-dead-vertices.gio",
-                    "tinkerpop-classic-vertices.gio",
-                    "tinkerpop-crew-vertices.gio");
-            for (final String fileName : kryoResources) {
-                PATHS.put(fileName, generateTempFile(KryoResourceAccess.class, fileName));
-            }
-
             final List<String> graphsonResources = Arrays.asList(
+                    "tinkerpop-classic-vertices.ldjson",
                     "grateful-dead-vertices.ldjson");
             for (final String fileName : graphsonResources) {
                 PATHS.put(fileName, generateTempFile(GraphSONResourceAccess.class, fileName));
@@ -49,13 +39,18 @@ public class SparkGraphProvider extends AbstractGraphProvider {
                                                     final String testMethodName) {
         return new HashMap<String, Object>() {{
             put("gremlin.graph", SparkGraph.class.getName());
+            //put("sparkgremlin.vertex_input_format", KryoVertexInputFormat.class.getCanonicalName());
+            //put(GiraphConstants.VERTEX_OUTPUT_FORMAT_CLASS.getKey(), KryoVertexOutputFormat.class.getCanonicalName());
         }};
     }
 
     @Override
     public void clear(final Graph g, final Configuration configuration) throws Exception {
-        if (g != null)
+        if (g != null) {
             g.close();
+            ((SparkGraph)g).sc().stop();
+            //Thread.sleep(1000);
+        }
     }
 
     @Override
@@ -66,13 +61,13 @@ public class SparkGraphProvider extends AbstractGraphProvider {
     public void loadGraphData(final Graph g, final LoadGraphWith.GraphData graphData) {
 
         if (graphData.equals(LoadGraphWith.GraphData.GRATEFUL)) {
-            ((SparkGraph) g).configuration().setInputLocation(PATHS.get("grateful-dead-vertices.gio"));
+            ((SparkGraph) g).configuration().setInputLocation(PATHS.get("grateful-dead-vertices.ldjson"));
         } else if (graphData.equals(LoadGraphWith.GraphData.MODERN)) {
-            ((SparkGraph) g).configuration().setInputLocation(PATHS.get("tinkerpop-modern-vertices.gio"));
+            ((SparkGraph) g).configuration().setInputLocation(PATHS.get("tinkerpop-modern-vertices.ldjson"));
         } else if (graphData.equals(LoadGraphWith.GraphData.CLASSIC)) {
-            ((SparkGraph) g).configuration().setInputLocation(PATHS.get("tinkerpop-classic-vertices.gio"));
+            ((SparkGraph) g).configuration().setInputLocation(PATHS.get("tinkerpop-classic-vertices.ldjson"));
         } else if (graphData.equals(LoadGraphWith.GraphData.CREW)) {
-            ((SparkGraph) g).configuration().setInputLocation(PATHS.get("tinkerpop-crew-vertices.gio"));
+            ((SparkGraph) g).configuration().setInputLocation(PATHS.get("tinkerpop-crew-vertices.ldjson"));
         } else {
             throw new RuntimeException("Could not load graph with " + graphData);
         }

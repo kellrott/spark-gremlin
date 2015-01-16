@@ -17,6 +17,10 @@ class SparkGraphConfiguration extends BaseConfiguration with Serializable with j
   }
 
   def setInputLocation(inputLocation: String) {
-    this.setProperty(Constants.GREMLIN_GIRAPH_INPUT_LOCATION, inputLocation)
+    this.setProperty(Constants.GREMLIN_SPARK_INPUT_LOCATION, inputLocation)
+  }
+
+  def get(key:String) : AnyRef = {
+    return this.getProperty(key)
   }
 }
